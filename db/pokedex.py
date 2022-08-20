@@ -59,3 +59,43 @@ class Pokedex:
                 evolutions.append(evolution['name'])
 
         return evolutions
+
+    def getPokemonByWeaknessFire(self):
+        typeFire = ["Fire"]
+        fireWeak = self.collection.find({"weakness": {"$all" : typeFire}}, {"id" : 0,"next_evolution": 0, "prev_evolution": 0,
+                                         "type": 0, "weaknesses": 1})
+        result = []
+        for pokemon in fireWeak:
+            result.append(pokemon)
+        return result
+
+    def getPokemonGraterSpawnThan(self, spawn: list):
+        spawn_chance = self.collection.find({"spawn_chance" :{"$gt": spawn}}, {"_id" : 0,"next_evolution": 0, "prev_evolution": 0,
+                                         "type": 0, "weaknesses": 0, "spawn_chance": 1})
+        pokemons = []
+        for pokemon in spawn_chance:
+            pokemons.append(pokemon)
+        return pokemons
+
+    def getPokemonLessSpawnThan(self, spawn):
+        response = self.collection.find({"spawn_chance" : {"$lt" : spawn}}, {"_id" : 0,"next_evolution": 0, "prev_evolution": 0,
+                                     "type": 0, "weaknesses": 0, "weight": 1})
+        pokemons = []
+        for pokemon in response:
+            pokemons.append(pokemon)
+        return pokemons
+
+    def getPokemonByPokedexNumber(self, number: int):
+        pokedex = self.collection.find({"id": number}, {"name": 1})
+        pokemons = {}
+        for pokemon in pokedex:
+            pokemons = pokemon
+        return pokemons
+    def getPokemonThatStartWithB(self):
+        name = self.collection.find({"name": {"$regex": "/^B.*$/"}}, {"_id" : 0,"next_evolution": 0, "prev_evolution": 0,
+                                         "type": 0, "weaknesses": 0, "name": 1})
+        pokemons = []
+        for pokemon in name:
+            pokemons.append(pokemon)
+        return pokemons
+
