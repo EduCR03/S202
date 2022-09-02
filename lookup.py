@@ -49,34 +49,27 @@ result2 = compras.collection.aggregate([
     {"$group":
         {
             "_id": "$cliente_id",
-            "total":
-                {
-                    "$sum": "$total"
-                }
+            "total":{"$sum": "$total"}
         }
     },
 
     {"$sort":
-        {
-            "total": 1
-        }
+        {"total": -1}
     },
 
-    {
-        "$unwind": '$_id'
-    },
+    {"$unwind": '$_id'},
 
     {"$project":
         {
-            "nome": 1,
-            "total": 1,
+            "nome": "$_id.nome",
+            "total": "$total",
             "_id": 0,
             "desconto":
                 {
                      "$cond":
                         {
                             "if":
-                                {"$gte": ["total", 10]}, "then": "true", "else": "false"
+                                {"$gte": ["total", 10]}, "then": True, "else": False
                         }
                 }
         }
