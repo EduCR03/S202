@@ -1,86 +1,46 @@
+import Escola
 from pprintpp import pprint as pp
-from db.database import Graph
 
+dao = Escola.EscolaDB()
 
-class PersonDAO(object):
-    def __init__(self):
-        self.db = Graph(uri='bolt://52.91.64.64:7687',
-                        user='neo4j', password='board-apparatuses-smashes')
+def Professor(nome, idade, area):
+    professor1 = {
+        'name': nome,
+        'age': idade,
+        'area': area
+    }
+    aux = dao.createProfessor(professor1)
 
-    def create(self, person):
-        return self.db.execute_query('CREATE (n:Person {name:$name, age:$age}) return n',
-                                     {'name': person['name'], 'age': person['age']})
+def Materia( assunto, horario):
+    assunto = 'Computacao Grafica'
+    horario = 'Vespertino'
+    materia2 = {
+    'assunto': assunto,
+    'horario': horario
+    }
+    aux = dao.createMateria(materia2)
 
-    def read_by_name(self, person):
-        return self.db.execute_query('MATCH (n:Person {name:$name}) RETURN n',
-                                     {'name': person['name']})
-    
-    def read_all_nodes(self):
-        return self.db.execute_query('MATCH (n) RETURN n')
+def Relacionamento (ano, professor, materia):
+    relacionamento = {
+        'year':ano
+    }
+    aux = dao.create_relation(professor, materia, relacionamento)
 
-    def update_age(self, person):
-        return self.db.execute_query('MATCH (n:Person {name:$name}) SET n.age = $age RETURN n',
-                                     {'name': person['name'], 'age': person['age']})
+    pp(aux)
 
-    def delete(self, person):
-        return self.db.execute_query('MATCH (n:Person {name:$name}) DELETE n',
-                                     {'name': person['name']})
+prof1 = Professor('Marcelo', 30, 'Computacao')
+prof2 = Professor('Renzo', 30, 'Software')
+prof3 = Professor('Chris', 30, 'Software')
+prof4 = Professor('Yvo', 40, 'Computacao')
 
-    def delete_all_nodes(self):
-        return self.db.execute_query('MATCH (n) DETACH DELETE n')
+mat1 = Materia('POO', 'Matutino')
+mat2 = Materia('CG', 'Vespertino')
 
-    def create_relation(self, person1, person2, year):
-        return self.db.execute_query('MATCH (n:Person {name:$name1}), (m:Person {name:$name2}) CREATE (n)-[r:KNOWS{year: $year}]->(m) RETURN n, r, m',
-                                     {'name1': person1['name'], 'name2': person2['name'], 'year': year})
-
-    def read_relation(self, person1, person2):
-        return self.db.execute_query('MATCH (n:Person {name:$name1})-[r]->(m:Person {name:$name2}) RETURN n, r, m',
-                                     {'name1': person1['name'], 'name2': person2['name']})
-
-def divider():
-    print('\n' + '-' * 80 + '\n')
-
-dao = PersonDAO()
-
-while 1:    
-    option = input('1. Create\n2. Read\n3. Update\n4. Delete\n')
-
-    if option == '1':
-        name = input('  Name: ')
-        age = input('   Age: ')
-        person = {
-            'name': name,
-            'age': age
-        }
-        aux = dao.create(person)
-        divider()
-
-    elif option == '2':
-        aux = dao.read_all_nodes()
-        pp(aux)
-        divider()
-
-    elif option == '3':
-        name = input('  Name: ')
-        age = input('   Age: ')
-        person = {
-            'name': name,
-            'age': age
-        }
-        
-        aux = dao.update_age(person)
-        divider()
-
-    elif option == '4':
-        name = input('  Name: ')
-        person = {
-            'name': name
-        }
-        
-        aux = dao.delete(person)
-        divider()
-
-    else:
-        break
+Relacionamento(2016, prof1, mat2)
 
 dao.db.close()
+
+
+
+                                  
+
